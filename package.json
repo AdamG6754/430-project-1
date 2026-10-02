@@ -1,0 +1,22 @@
+{
+  "name": "http-api-assignment-ii",
+  "version": "1.0.0",
+  "description": "Second HTTP API assignment",
+  "homepage": "https://github.com/AdamG6754/http-api-assignment-ii#readme",
+  "bugs": {
+    "url": "https://github.com/AdamG6754/http-api-assignment-ii/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AdamG6754/http-api-assignment-ii.git"
+  },
+  "license": "ISC",
+  "author": "AJG",
+  "type": "commonjs",
+  "main": "eslint.config.js",
+  "scripts": {
+    "test": "echo \"Tests complete\"",
+    "start": "node ./src/server.js",
+    "pretest": "eslint ./src --fix"
+  }
+}
