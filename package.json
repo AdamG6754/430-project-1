@@ -1,22 +1,20 @@
 {
-  "name": "http-api-assignment-ii",
+  "name": "430-project-1",
   "version": "1.0.0",
-  "description": "Second HTTP API assignment",
-  "homepage": "https://github.com/AdamG6754/http-api-assignment-ii#readme",
+  "description": "Project 1 for IGME430",
+  "homepage": "https://github.com/AdamG6754/430-project-1#readme",
   "bugs": {
-    "url": "https://github.com/AdamG6754/http-api-assignment-ii/issues"
+    "url": "https://github.com/AdamG6754/430-project-1/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/AdamG6754/http-api-assignment-ii.git"
+    "url": "git+https://github.com/AdamG6754/430-project-1.git"
   },
   "license": "ISC",
   "author": "AJG",
   "type": "commonjs",
-  "main": "eslint.config.js",
+  "main": "./src/server.js",
   "scripts": {
-    "test": "echo \"Tests complete\"",
-    "start": "node ./src/server.js",
-    "pretest": "eslint ./src --fix"
+    "test": "echo \"Error: no test specified\" && exit 1"
   }
 }
