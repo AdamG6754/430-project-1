@@ -10,11 +10,13 @@
     "type": "git",
     "url": "git+https://github.com/AdamG6754/430-project-1.git"
   },
-  "license": "ISC",
+  "license": "UNLICENSED",
   "author": "AJG",
   "type": "commonjs",
   "main": "./src/server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"No Tests\"",
+    "pretest": "eslint ./src --fix",
+    "start": "node ./src/server.js"
   }
 }
