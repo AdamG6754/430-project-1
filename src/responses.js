@@ -3,7 +3,7 @@ const fs = require('fs'); // pull in the file system module
 const index = fs.readFileSync(`${__dirname}/../client/client.html`);
 const css = fs.readFileSync(`${__dirname}/../client/style.css`);
 
-const users = {}; //User list
+// const books = JSON.parse(fs.readFileSync(`${__dirname}/../books.json`));
 
 const respond = (request, response, status, content, type) => {
     console.log('status: ' + status);
@@ -30,6 +30,7 @@ const getCSS = (request, response) => {
     respond(request, response, 200, css, 'text/css');
 };
 
+/*
 const addUser = (request, response) => {
     const { name, age } = request.body;
 
@@ -56,35 +57,194 @@ const addUser = (request, response) => {
 
     return respond(request, response, responseCode, "", 'application/json');
 }
+*/
 
-const respondJSON = (request, response) => {
+const respondGetBibliography = (request, response) => {
     let content;
     let code;
+    let id = '';
 
-    switch (request.url) {
-        case '/getUsers':
-            content = JSON.stringify(users)
-            code = 200;
-            break;
+    console.log('Request URL: ' + request.url);
 
-        case '/notReal':
-        default:
-            let contentJSON = {};
+    code = 200;
+    content = 'getBibliography('+JSON.stringify(request.body)+')';``
 
-            contentJSON.message = 'The page you are looking for was not found.';
-            contentJSON.id = 'notFound';
-            content = JSON.stringify(contentJSON);
-            code = 404;
-            break;
+    if (request.body.Author === undefined){
+        console.log('Missing required parameter: Author');
+        content = 'Missing required parameter: Author';
+        id = 'missingParameter';
+        code = 400;
     }
 
-    respond(request, response, code, content, 'application/json');
+    let contentJSON = {};
+
+    contentJSON.message = content;
+    if (id) {
+        contentJSON.id = id;
+    }
+    
+    respond(request, response, code, JSON.stringify(contentJSON), 'application/json');
 }
 
+const RespondGetBookTitles = (request, response) => {
+    let content;
+    let code;
+    let id = '';
+
+    console.log('Request URL: ' + request.url);
+
+    code = 200;
+    content = 'getBookTitles('+JSON.stringify(request.body)+')';
+    for (const [key, value] of Object.entries(request.body)) {
+        console.log(key + ': ' + value);
+        switch (key) {
+            case 'Author':
+            case 'Language':
+            case  'Genre':
+            case 'Earliest Year':
+            case 'Latest Year':
+                    break;
+            default:
+                console.log('Get Book Titles - Invalid parameter: ' + key);
+                content = 'Invalid parameter: ' + key;
+                code = 400;
+                id = 'invalidParameter';
+                break;
+        }
+    }
+
+    let contentJSON = {};
+
+    contentJSON.message = content;
+    if (id) {
+        contentJSON.id = id;
+    }
+    
+    respond(request, response, code, JSON.stringify(contentJSON), 'application/json');
+}
+
+const respondGetBooks = (request, response) => {
+    let content;
+    let code;
+    let id = '';
+
+    console.log('Request URL: ' + request.url);
+
+    code = 200;
+    content = 'getBooks('+JSON.stringify(request.body)+')';
+    for (const [key, value] of Object.entries(request.body)) {
+        console.log(key + ': ' + value);
+        switch (key) {
+            case 'Author':
+            case 'Language':
+            case  'Genre':
+            case 'Earliest Year':
+            case 'Latest Year':
+                    break;
+            default:
+                console.log('Get Books - Invalid parameter: ' + key);
+                content = 'Invalid parameter: ' + key;
+                code = 400;
+                id = 'invalidParameter';
+                break;
+        }
+    }
+
+    let contentJSON = {};
+
+    contentJSON.message = content;
+    if (id) {
+        contentJSON.id = id;
+    }
+    
+    respond(request, response, code, JSON.stringify(contentJSON), 'application/json');
+}
+
+const respondAddBook = (request, response) => {
+    let content;
+    let code;
+    let id = '';
+
+    console.log('Request URL: ' + request.url);
+
+    code = 200;
+    content = 'addBook('+JSON.stringify(request.body)+')';
+    console.log('Request body: ' + JSON.stringify(request.body));
+    
+    if (request.body.Author === undefined) {
+        content = 'Missing required parameter: Author';
+        code = 400;
+        id = 'missingParameter';
+    }
+    if (request.body.Language === undefined) {
+        content = 'Missing required parameter: Language';
+        code = 400;
+        id = 'missingParameter';
+    }
+    if (request.body.Genre === undefined) {
+        content = 'Missing required parameter: Genre';
+        code = 400;
+        id = 'missingParameter';
+    }
+    if (request.body.Year === undefined) {
+        content = 'Missing required parameter: Year';
+        code = 400;
+        id = 'missingParameter';
+    }
+    if (request.body.PageCount === undefined) {
+        content = 'Missing required parameter: PageCount';
+        code = 400;
+        id = 'missingParameter';
+    }
+    if (request.body.Title === undefined) {
+        content = 'Missing required parameter: Title';
+        code = 400;
+        id = 'missingParameter';
+    }
+    
+    let contentJSON = {};
+
+    contentJSON.message = content;
+    if (id) {
+        contentJSON.id = id;
+    }
+    
+    respond(request, response, code, JSON.stringify(contentJSON), 'application/json');
+}
+
+const respondDeleteBook = (request, response) => {
+    let content;
+    let code;
+    let id = '';
+
+    console.log('Request URL: ' + request.url);
+
+    code = 200;
+    content = 'deleteBook('+JSON.stringify(request.body)+')';
+
+    if (request.body.Title === undefined){
+        console.log('Missing required parameter: Title');
+        content = 'Missing required parameter: Title';
+        id = 'missingParameter';
+        code = 400;
+    }
+
+    let contentJSON = {};
+
+    contentJSON.message = content;
+    if (id) {
+        contentJSON.id = id;
+    }
+    
+    respond(request, response, code, JSON.stringify(contentJSON), 'application/json');
+}
 
 module.exports = {
     getIndex,
     getCSS,
-    respondJSON,
-    addUser,
+    RespondGetBookTitles,
+    respondGetBooks,
+    respondGetBibliography,
+    respondAddBook,
+    respondDeleteBook,
 };
