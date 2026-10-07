@@ -1,4 +1,6 @@
 const fs = require('fs'); // pull in the file system module
+const { getBuiltinModule } = require('process');
+const database = require('./database');
 
 const index = fs.readFileSync(`${__dirname}/../client/client.html`);
 const css = fs.readFileSync(`${__dirname}/../client/style.css`);
@@ -30,35 +32,6 @@ const getCSS = (request, response) => {
     respond(request, response, 200, css, 'text/css');
 };
 
-/*
-const addUser = (request, response) => {
-    const { name, age } = request.body;
-
-    const responseJSON = { message: 'Name and age must both be present.' };
-
-    if (!name || !age) {
-        responseJSON.id = 'missingParams';
-        return respond(request, response, 400, responseJSON, 'application/json');
-    }
-
-    let responseCode = 204;
-
-    if (!users[name]) {
-        responseCode = 201;
-        users[name] = { name: name, };
-    }
-
-    users[name].age = age;
-
-    if (responseCode === 201) {
-        responseJSON.message = 'Created successfully';
-        return respond(request, response, responseCode, JSON.stringify(responseJSON), 'application/json');
-    }
-
-    return respond(request, response, responseCode, "", 'application/json');
-}
-*/
-
 const respondGetBibliography = (request, response) => {
     let content;
     let code;
@@ -67,13 +40,18 @@ const respondGetBibliography = (request, response) => {
     console.log('Request URL: ' + request.url);
 
     code = 200;
-    content = 'getBibliography('+JSON.stringify(request.body)+')';``
+    content = 'getBibliography('+JSON.stringify(request.body)+')';
 
     if (request.body.Author === undefined){
         console.log('Missing required parameter: Author');
         content = 'Missing required parameter: Author';
         id = 'missingParameter';
         code = 400;
+    }
+
+    // Get the bibliography if no errors occurred
+    if (code === 200) {
+        content = database.getBibliography(request.body.Author);
     }
 
     let contentJSON = {};
@@ -86,7 +64,7 @@ const respondGetBibliography = (request, response) => {
     respond(request, response, code, JSON.stringify(contentJSON), 'application/json');
 }
 
-const RespondGetBookTitles = (request, response) => {
+const respondGetBookTitles = (request, response) => {
     let content;
     let code;
     let id = '';
@@ -113,6 +91,15 @@ const RespondGetBookTitles = (request, response) => {
         }
     }
 
+    // If no invalid parameters, proceed to get the book titles
+    if (code === 200) {
+        content = database.getBookTitles(request.body.Author,
+                             request.body.Language,
+                             request.body.Genre,
+                             request.body['Earliest Year'],
+                             request.body['Latest Year']);
+    }
+
     let contentJSON = {};
 
     contentJSON.message = content;
@@ -137,7 +124,7 @@ const respondGetBooks = (request, response) => {
         switch (key) {
             case 'Author':
             case 'Language':
-            case  'Genre':
+            case 'Genre':
             case 'Earliest Year':
             case 'Latest Year':
                     break;
@@ -149,6 +136,17 @@ const respondGetBooks = (request, response) => {
                 break;
         }
     }
+
+    // If no invalid parameters, proceed to get the books
+    if (code === 200) {
+        content = database.getBooks(request.body.Author,
+                                    request.body.Language,
+                                    request.body.Genre,
+                                    request.body['Earliest Year'],
+                                    request.body['Latest Year']
+                                   );
+    }
+
 
     let contentJSON = {};
 
@@ -201,6 +199,11 @@ const respondAddBook = (request, response) => {
         code = 400;
         id = 'missingParameter';
     }
+
+    // Add the book to the database if all required parameters are present
+    if (code === 200) {
+        database.addBook(request.body);
+    }
     
     let contentJSON = {};
 
@@ -220,13 +223,25 @@ const respondDeleteBook = (request, response) => {
     console.log('Request URL: ' + request.url);
 
     code = 200;
-    content = 'deleteBook('+JSON.stringify(request.body)+')';
+    content = '';
 
     if (request.body.Title === undefined){
         console.log('Missing required parameter: Title');
         content = 'Missing required parameter: Title';
         id = 'missingParameter';
         code = 400;
+    }
+
+    // Delete the book from the database
+    if (code === 200) {
+        if (!database.deleteBook(request.body.Title)) {
+            content = 'Book not found: ' + request.body.Title;
+            code = 404;
+            id = 'bookNotFound';
+        } else {
+            content = 'Book deleted: ' + request.body.Title;
+            code = 200;
+         }   
     }
 
     let contentJSON = {};
@@ -242,7 +257,7 @@ const respondDeleteBook = (request, response) => {
 module.exports = {
     getIndex,
     getCSS,
-    RespondGetBookTitles,
+    respondGetBookTitles,
     respondGetBooks,
     respondGetBibliography,
     respondAddBook,

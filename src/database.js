@@ -35,3 +35,11 @@ const deleteBook = (title) => {
         books.splice(index, 1);
     }
 };
+
+module.exports = {
+    getBibliography,
+    getBookTitles,
+    getBooks,
+    addBook,
+    deleteBook,
+};
