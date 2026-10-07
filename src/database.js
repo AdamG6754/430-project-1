@@ -33,7 +33,9 @@ const deleteBook = (title) => {
     const index = books.findIndex(book => book.title === title);
     if (index !== -1) {
         books.splice(index, 1);
+        return true;
     }
+    return false;
 };
 
 module.exports = {
